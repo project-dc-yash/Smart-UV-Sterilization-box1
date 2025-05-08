@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Smart UV Sterilization Box</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background: #787476;
+    }
+    .container {
+      width: 480px;
+      padding: 30px;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+      text-align: center;
+      animation: fadeIn 1.5s ease-in-out;
+    }
+    h1, h3 {
+      color: white;
+      margin-bottom: 10px;
+    }
+    p {
+      color: white;
+      font-size: 16px;
+    }
+    .btn {
+      width: 100%;
+      padding: 10px;
+      border: none;
+      border-radius: 5px;
+      background: #ff7e5f;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+      transition: 0.3s;
+      margin-top: 15px;
+    }
+    .btn:hover {
+      background: #e05643;
+    }
+    #uvTimer {
+      margin-top: 10px;
+      color: #fff;
+      font-size: 18px;
+      font-weight: bold;
+    }
+    #boxStatus {
+      font-size: 16px;
+      margin-top: 10px;
+      color: white;
+    }
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Smart UV Sterilization Box</h1>
+    <h3>IoT Device Monitoring</h3>
+    <p id="boxStatus">Box Status: Closed ✅</p>
+    <div id="uvTimer">UV Process: Not Started</div>
+    <button class="btn" onclick="startUVProcess()">Start UV Process</button>
+  </div>
+
+  <script>
+    let boxClosed = true; // Simulated box status
+    let isProcessing = false;
+
+    function updateBoxStatusDisplay() {
+      const status = document.getElementById("boxStatus");
+      status.innerText = `Box Status: ${boxClosed ? "Closed ✅" : "Open ❌"}`;
+    }
+
+    // Optional: Auto-toggle box status for simulation every 60 seconds
+    function toggleBoxStatus() {
+      boxClosed = !boxClosed;
+      updateBoxStatusDisplay();
+    }
+
+    function startUVProcess() {
+      const uvTimer = document.getElementById("uvTimer");
+
+      if (!boxClosed) {
+        uvTimer.innerText = "⚠️ Box is Open! Close it to proceed.";
+        return;
+      }
+
+      if (isProcessing) {
+        uvTimer.innerText = "UV process already running...";
+        return;
+      }
+
+      let timeLeft = 30;
+      isProcessing = true;
+      uvTimer.innerText = `UV Process: ${timeLeft}s remaining...`;
+
+      const interval = setInterval(() => {
+        if (!boxClosed) {
+          clearInterval(interval);
+          isProcessing = false;
+          uvTimer.innerText = "Process Interrupted ⚠️ (Box Opened)";
+          return;
+        }
+
+        timeLeft--;
+        uvTimer.innerText = `UV Process: ${timeLeft}s remaining...`;
+
+        if (timeLeft <= 0) {
+          clearInterval(interval);
+          isProcessing = false;
+          uvTimer.innerText = "✅ UV Sterilization Complete!";
+          setTimeout(() => {
+            window.location.href = "uv-processing.html";
+          }, 2000); // Redirect to next page
+        }
+      }, 1000);
+    }
+
+    updateBoxStatusDisplay();
+    setInterval(toggleBoxStatus, 60000); // Simulate box open/close every 60s
+  </script>
+</body>
+</html>
